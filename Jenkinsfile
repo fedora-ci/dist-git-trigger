@@ -3,31 +3,32 @@
 
 def msg
 def artifactId
-def additionalArtifactIds
-def allTaskIds = [] as Set
 
 pipeline {
 
     agent {
-        label 'master'                                                                                                                                        
+        label 'master'
     }
 
     triggers {
-       ciBuildTrigger(
-           noSquash: true,
-           providerList: [
-               rabbitMQSubscriber(
-                   name: env.FEDORA_CI_MESSAGE_PROVIDER,
-                   overrides: [
-                       topic: 'org.fedoraproject.prod.bodhi.update.status.testing.koji-build-group.build.complete',
-                       queue: 'osci-pipelines-queue-11'
-                   ],
-                   checks: [
-                       [field: '$.artifact.release', expectedValue: '^f34$']
-                   ]
-               )
-           ]
-       )
+        ciBuildTrigger(
+            noSquash: true,
+            providerList: [
+                rabbitMQSubscriber(
+                    name: env.FEDORA_CI_MESSAGE_PROVIDER,
+                    overrides: [
+                        topic: 'org.fedoraproject.prod.buildsys.task.state.change',
+                        queue: 'osci-pipelines-queue-11'
+                    ],
+                    checks: [
+                        [field: '$.owner', expectedValue: 'bpeck/jenkins-continuous-infra.apps.ci.centos.org'],
+                        [field: '$.new', expectedValue: 'CLOSED'],
+                        [field: '$.method', expectedValue: 'build'],
+                        [field: '$.srpm', expectedValue: '^fedora-ci_*']
+                    ]
+                )
+            ]
+        )
     }
 
     parameters {
@@ -41,18 +42,12 @@ pipeline {
                     msg = readJSON text: CI_MESSAGE
 
                     if (msg) {
-                        msg['artifact']['builds'].each { build ->
-                            allTaskIds.add(build['task_id'])
-                        }
+                        def srpm = msg['srpm']
+                        def prIdList = srpm.split('#')[0].split('_')
+                        def prId = "fedora-dist-git:${prIdList[1]}@${prIdList[2]}#${prIdList[3]}"
 
-                        if (allTaskIds) {
-                            allTaskIds.each { taskId ->
-                                artifactId = "koji-build:${taskId}"
-                                additionalArtifactIds = allTaskIds.findAll{ it != taskId }.collect{ "koji-build:${it}" }.join(',')
-
-                                build job: 'fedora-ci/dist-git-pipeline/tmt', wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId), string(name: 'ADDITIONAL_ARTIFACT_IDS', value: additionalArtifactIds) ]
-                            }
-                        }
+                        artifactId = "(koji-build:${msg['id']})->${prId}"
+                        build job: 'fedora-ci/dist-git-pipeline/tmt', wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId) ]
                     }
                 }
             }
