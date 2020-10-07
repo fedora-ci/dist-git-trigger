@@ -1,5 +1,6 @@
 #!groovy
 
+def supportedReleases = ['f31', 'f32', 'f33', 'f34']
 
 def msg
 def artifactId
@@ -46,15 +47,17 @@ pipeline {
                         def prIdList = srpm.split('#')[0].split(';')
                         def prId = "fedora-dist-git:${prIdList[1]}@${prIdList[2]}#${prIdList[3]}"
                          // TODO: how reliable is this? the second item in the array *should* be the release Id
-                        def branch = msg['info']['request'][1]
+                        def releaseId = msg['info']['request'][1]
 
-                        if (branch == env.FEDORA_CI_RAWHIDE_RELEASE_ID) {
-                            // FIXME: once we move replace master branch with fmf
-                            branch = 'fmf'
+                        if (supportedReleases.contains(releaseId)) {
+                            if (releaseId == env.FEDORA_CI_RAWHIDE_RELEASE_ID) {
+                                // FIXME: once we move replace master branch with fmf
+                                releaseId = 'fmf'
+                            }
+
+                            artifactId = "(koji-build:${msg['id']})->${prId}"
+                            build job: 'fedora-ci/dist-git-pipeline/${releaseId}', wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId) ]
                         }
-
-                        artifactId = "(koji-build:${msg['id']})->${prId}"
-                        build job: 'fedora-ci/dist-git-pipeline/${branch}', wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId) ]
                     }
                 }
             }
