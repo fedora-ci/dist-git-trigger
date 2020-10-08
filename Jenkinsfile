@@ -44,7 +44,7 @@ pipeline {
 
                     if (msg) {
                         def srpm = msg['srpm']
-                        def prIdList = srpm.split(';')[0].split(';')
+                        def prIdList = srpm.split(';')[0].split('_')
                         def prId = "fedora-dist-git:${prIdList[1]}@${prIdList[2]}#${prIdList[3]}"
                          // TODO: how reliable is this? the second item in the array *should* be the release Id
                         def releaseId = msg['info']['request'][1]
