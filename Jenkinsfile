@@ -56,7 +56,7 @@ pipeline {
                             }
 
                             artifactId = "(koji-build:${msg['id']})->${prId}"
-                            build job: 'fedora-ci/dist-git-pipeline/${releaseId}', wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId) ]
+                            build job: "fedora-ci/dist-git-pipeline/${releaseId}", wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId) ]
                         }
                     }
                 }
