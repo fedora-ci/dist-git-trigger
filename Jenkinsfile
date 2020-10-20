@@ -51,8 +51,8 @@ pipeline {
 
                         if (supportedReleases.contains(releaseId)) {
                             if (releaseId == env.FEDORA_CI_RAWHIDE_RELEASE_ID) {
-                                // FIXME: fix once we replace master branch with tmt
-                                releaseId = 'tmt'
+                                // this is rawhide
+                                releaseId = 'master'
                             }
 
                             artifactId = "(koji-build:${msg['id']})->${prId}"
