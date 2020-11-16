@@ -11,26 +11,26 @@ pipeline {
         label 'master'
     }
 
-    triggers {
-        ciBuildTrigger(
-            noSquash: true,
-            providerList: [
-                rabbitMQSubscriber(
-                    name: env.FEDORA_CI_MESSAGE_PROVIDER,
-                    overrides: [
-                        topic: 'org.fedoraproject.prod.buildsys.task.state.change',
-                        queue: 'osci-pipelines-queue-6'
-                    ],
-                    checks: [
-                        [field: '$.owner', expectedValue: 'bpeck/jenkins-continuous-infra.apps.ci.centos.org'],
-                        [field: '$.new', expectedValue: 'CLOSED'],
-                        [field: '$.method', expectedValue: 'build'],
-                        [field: '$.srpm', expectedValue: '^fedora-ci_.*']
-                    ]
-                )
-            ]
-        )
-    }
+    // triggers {
+    //     ciBuildTrigger(
+    //         noSquash: true,
+    //         providerList: [
+    //             rabbitMQSubscriber(
+    //                 name: env.FEDORA_CI_MESSAGE_PROVIDER,
+    //                 overrides: [
+    //                     topic: 'org.fedoraproject.prod.buildsys.task.state.change',
+    //                     queue: 'osci-pipelines-queue-6'
+    //                 ],
+    //                 checks: [
+    //                     [field: '$.owner', expectedValue: 'bpeck/jenkins-continuous-infra.apps.ci.centos.org'],
+    //                     [field: '$.new', expectedValue: 'CLOSED'],
+    //                     [field: '$.method', expectedValue: 'build'],
+    //                     [field: '$.srpm', expectedValue: '^fedora-ci_.*']
+    //                 ]
+    //             )
+    //         ]
+    //     )
+    // }
 
     parameters {
         string(name: 'CI_MESSAGE', defaultValue: '{}', description: 'CI Message')
