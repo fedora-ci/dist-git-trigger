@@ -1,10 +1,10 @@
 #!groovy
 
-
 def msg
 def artifactId
 def additionalArtifactIds
 def allTaskIds = [] as Set
+
 
 pipeline {
 
@@ -13,7 +13,7 @@ pipeline {
     }
 
     options {
-        buildDiscarder(logRotator(daysToKeepStr: '45', artifactNumToKeepStr: '100'))
+        buildDiscarder(logRotator(daysToKeepStr: '21', artifactNumToKeepStr: '100'))
         skipDefaultCheckout()
     }
 
