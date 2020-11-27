@@ -28,7 +28,7 @@ pipeline {
                        queue: 'osci-pipelines-queue-11'
                    ],
                    checks: [
-                       [field: '$.artifact.release', expectedValue: 'f36|f35|f34|f33|f32']
+                       [field: '$.artifact.release', expectedValue: '^f[3-9]{1}[2-9]{1}$']
                    ]
                )
            ]
