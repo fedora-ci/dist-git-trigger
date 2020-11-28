@@ -57,8 +57,8 @@ pipeline {
                                 artifactId = "koji-build:${taskId}"
                                 additionalArtifactIds = allTaskIds.findAll{ it != taskId }.collect{ "koji-build:${it}" }.join(',')
 
-                                build job(
-                                    "fedora-ci/dist-git-pipeline/master",
+                                build(
+                                    job: "fedora-ci/dist-git-pipeline/master",
                                     wait: false,
                                     parameters: [
                                         string(name: 'ARTIFACT_ID', value: artifactId),
