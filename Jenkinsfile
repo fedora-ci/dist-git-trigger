@@ -1,6 +1,6 @@
 #!groovy
 
-def supportedReleases = ['f32', 'f33', 'f34', 'f35', 'f36']
+def supportedReleases = ['f32', 'f33', 'f34', 'f35', 'f36', 'f37', 'f38', 'f39']
 
 def msg
 def artifactId
@@ -45,7 +45,7 @@ pipeline {
         stage('Trigger Testing') {
             steps {
                 script {
-                    msg = readJSON text: CI_MESSAGE
+                    msg = readJSON text: params.CI_MESSAGE
 
                     if (msg) {
                         def srpm = msg['srpm']
@@ -55,13 +55,16 @@ pipeline {
                         def releaseId = msg['info']['request'][1]
 
                         if (supportedReleases.contains(releaseId)) {
-                            if (releaseId == env.FEDORA_CI_RAWHIDE_RELEASE_ID) {
-                                // this is rawhide
-                                releaseId = 'master'
-                            }
 
                             artifactId = "(koji-build:${msg['id']})->${prId}"
-                            build job: "fedora-ci/dist-git-pipeline/${releaseId}", wait: false, parameters: [ string(name: 'ARTIFACT_ID', value: artifactId) ]
+                            build(
+                                job: "fedora-ci/dist-git-pipeline/master",
+                                wait: false,
+                                parameters: [
+                                    string(name: 'ARTIFACT_ID', value: artifactId)
+                                    string(name: 'TEST_PROFILE', value: releaseId)
+                                ]
+                            )
                         }
                     }
                 }
