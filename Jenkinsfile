@@ -61,7 +61,7 @@ pipeline {
                                 job: "fedora-ci/dist-git-pipeline/master",
                                 wait: false,
                                 parameters: [
-                                    string(name: 'ARTIFACT_ID', value: artifactId)
+                                    string(name: 'ARTIFACT_ID', value: artifactId),
                                     string(name: 'TEST_PROFILE', value: releaseId)
                                 ]
                             )
