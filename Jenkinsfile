@@ -17,23 +17,23 @@ pipeline {
         skipDefaultCheckout()
     }
 
-    triggers {
-       ciBuildTrigger(
-           noSquash: true,
-           providerList: [
-               rabbitMQSubscriber(
-                   name: env.FEDORA_CI_MESSAGE_PROVIDER,
-                   overrides: [
-                       topic: 'org.fedoraproject.prod.bodhi.update.status.testing.koji-build-group.build.complete',
-                       queue: 'osci-pipelines-queue-11'
-                   ],
-                   checks: [
-                       [field: '$.artifact.release', expectedValue: '^f[3-9]{1}[2-9]{1}$']
-                   ]
-               )
-           ]
-       )
-    }
+    // triggers {
+    //    ciBuildTrigger(
+    //        noSquash: true,
+    //        providerList: [
+    //            rabbitMQSubscriber(
+    //                name: env.FEDORA_CI_MESSAGE_PROVIDER,
+    //                overrides: [
+    //                    topic: 'org.fedoraproject.prod.bodhi.update.status.testing.koji-build-group.build.complete',
+    //                    queue: 'osci-pipelines-queue-11'
+    //                ],
+    //                checks: [
+    //                    [field: '$.artifact.release', expectedValue: '^f[3-9]{1}[2-9]{1}$']
+    //                ]
+    //            )
+    //        ]
+    //    )
+    // }
 
     parameters {
         string(name: 'CI_MESSAGE', defaultValue: '{}', description: 'CI Message')
