@@ -7,9 +7,7 @@ def artifactId
 
 pipeline {
 
-    agent {
-        label 'dist-git-trigger'
-    }
+    agent none
 
     options {
         buildDiscarder(logRotator(daysToKeepStr: '45', artifactNumToKeepStr: '100'))
@@ -21,7 +19,7 @@ pipeline {
             noSquash: true,
             providerList: [
                 rabbitMQSubscriber(
-                    name: env.FEDORA_CI_MESSAGE_PROVIDER,
+                    name: 'RabbitMQ',
                     overrides: [
                         topic: 'org.fedoraproject.prod.buildsys.task.state.change',
                         queue: 'osci-pipelines-queue-6'
