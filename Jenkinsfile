@@ -71,7 +71,7 @@ pipeline {
                                 // some updates can have dozens or hundreds of builds,
                                 // and Jenkins could struggle to handle so many requests at the same time
                                 if (counter > 1) {
-                                    sleep(time:5, unit:"SECONDS")
+                                    sleep(time:20, unit:"SECONDS")
                                 }
                                 counter += 1
                             }
