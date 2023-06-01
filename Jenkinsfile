@@ -1,6 +1,10 @@
 #!groovy
 
-def supportedReleases = ['f32', 'f33', 'f34', 'f35', 'f36', 'f37', 'f38', 'f39']
+// TODO: use regex magic instead of explicitly listing all supported build targets
+def supportedReleases = [
+    'f32', 'f33', 'f34', 'f35', 'f36', 'f37', 'f38', 'f39', 'f40', 'f41', 'f42', 'f43',
+    'epel7', 'epel8', 'epel8-next', 'epel9', 'epel9-next'
+]
 
 def msg
 def artifactId
