@@ -26,7 +26,7 @@ pipeline {
                        queue: 'osci-pipelines-queue-11'
                    ],
                    checks: [
-                       [field: '$.artifact.release', expectedValue: '^f[3-9]{1}[0-9]{1}$']
+                       [field: '$.update.release.dist_tag', expectedValue: '^f[3-9]{1}[0-9]{1}$']
                    ]
                )
            ]
@@ -44,7 +44,7 @@ pipeline {
                     msg = readJSON text: params.CI_MESSAGE
 
                     if (msg) {
-                        def releaseId = msg['artifact']['release']
+                        def releaseId = msg['update']['release']['dist_tag']
 
                         msg['artifact']['builds'].each { build ->
                             allTaskIds.add(build['task_id'])
