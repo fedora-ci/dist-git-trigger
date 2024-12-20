@@ -26,7 +26,8 @@ pipeline {
                        queue: 'osci-pipelines-queue-11'
                    ],
                    checks: [
-                       [field: '$.update.release.dist_tag', expectedValue: '^f[3-9]{1}[0-9]{1}$']
+                       [field: '$.update.release.dist_tag', expectedValue: '^(f[3-9]{1}[0-9]{1}|epel10.[0-9]+)$'],
+                       [field: '$.update.release.branch', expectedValue: '^(f[3-9]{1}[0-9]{1}|rawhide|epel10)$']
                    ]
                )
            ]
@@ -44,10 +45,15 @@ pipeline {
                     msg = readJSON text: params.CI_MESSAGE
 
                     if (msg) {
-                        def releaseId = msg['update']['release']['dist_tag']
-
                         msg['artifact']['builds'].each { build ->
                             allTaskIds.add(build['task_id'])
+                        }
+
+                        def testProfile
+                        if (msg['update']['release']['branch'] == 'epel10') {
+                            testProfile = 'epel10'
+                        } else {
+                            testProfile = msg['update']['release']['dist_tag']
                         }
 
                         if (allTaskIds) {
@@ -63,7 +69,7 @@ pipeline {
                                     parameters: [
                                         string(name: 'ARTIFACT_ID', value: artifactId),
                                         string(name: 'ADDITIONAL_ARTIFACT_IDS', value: additionalArtifactIds),
-                                        string(name: 'TEST_PROFILE', value: "${releaseId}")
+                                        string(name: 'TEST_PROFILE', value: testProfile)
                                     ]
                                 )
 
