@@ -1,11 +1,5 @@
 #!groovy
 
-def msg
-def artifactId
-def additionalArtifactIds
-def allTaskIds = [] as Set
-
-
 pipeline {
 
     agent none
@@ -41,14 +35,21 @@ pipeline {
         stage('Trigger Testing') {
             steps {
                 script {
-                    msg = readJSON text: params.CI_MESSAGE
+                    def msg = readJSON text: params.CI_MESSAGE
 
                     if (msg) {
-                        def releaseId = msg['update']['release']['dist_tag']
+                        def branch = msg['update']['release']['branch']
+                        def bodhiId = msg['update']['updateid']
+                        currentBuild.displayName = bodhiId
+
+                        def allTaskIds = [] as Set
 
                         msg['artifact']['builds'].each { build ->
                             allTaskIds.add(build['task_id'])
                         }
+
+                        def artifactId
+                        def additionalArtifactIds
 
                         if (allTaskIds) {
 
@@ -63,7 +64,7 @@ pipeline {
                                     parameters: [
                                         string(name: 'ARTIFACT_ID', value: artifactId),
                                         string(name: 'ADDITIONAL_ARTIFACT_IDS', value: additionalArtifactIds),
-                                        string(name: 'TEST_PROFILE', value: "${releaseId}")
+                                        string(name: 'DIST_GIT_BRANCH', value: branch)
                                     ]
                                 )
 
