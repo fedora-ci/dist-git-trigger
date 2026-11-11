@@ -51,6 +51,11 @@ pipeline {
                         def artifactId
                         def additionalArtifactIds
 
+                        def multihostPipeline = true
+                        if (branch == 'f45' || branch == 'f44' || branch == 'f43') {
+                            multihostPipeline = false
+                        }
+
                         if (allTaskIds) {
 
                             def counter = 0
@@ -65,6 +70,7 @@ pipeline {
                                         string(name: 'ARTIFACT_ID', value: artifactId),
                                         string(name: 'ADDITIONAL_ARTIFACT_IDS', value: additionalArtifactIds),
                                         string(name: 'DIST_GIT_BRANCH', value: branch)
+                                        booleanParam(name: 'MULTIHOST_PIPELINE', value: multihostPipeline)
                                     ]
                                 )
 
